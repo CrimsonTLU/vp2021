@@ -42,6 +42,7 @@
 	}
     
 	$photo_html = '<img src="' .$photo_dir .$all_photos[$photo_num] .'" alt="Tallinna Ülikool">';
+	
 	$photo_file_html = "\n <p>".$all_photos[$photo_num] ."</p> \n";
     
     $photo_list_html = "\n <ul> \n";
@@ -74,8 +75,8 @@
 	$photo_select_html = '<select name="photo_select">' ."\n";
 	for($i = 0; $i < $file_count; $i ++){
 		$photo_select_html .= '<option value="' .$i .'"';
-        if($i == $photo_num){
-			$photo_select_html .= " selected";
+        if($i == $photo_num){ 	//Kontrollime, kas i ja valitud väärtus on samad
+			$photo_select_html .= " selected"; //Atribuutide vahel peab olema tühik
 		}
         $photo_select_html .= '>' .$all_photos[$i] ."</option> \n";
 	}
@@ -85,8 +86,14 @@
 <!DOCTYPE html>
 <html lang="et">
 <head>
+	<link rel="stylesheet" href="styles.css">
 	<meta charset="utf-8">
 	<title><?php echo $author_name; ?>, veebiprogrammeerimine</title>
+	<style>
+		body {
+			text-align:center
+		}
+		</style>
 </head>
 <body>
 	<h1><?php echo $author_name; ?>, veebiprogrammeerimine, muudatused tehtud kodus</h1>
@@ -104,14 +111,14 @@
 	
 	<form method="POST">
 		<?php echo $photo_select_html; ?>
-        <input type="submit" name="photo_select_submit" value="Vali">
+        <input type="submit" name="photo_select_submit" value="Näita valitud fotot">
 	</form>
 	
 	<?php
-		echo $photo_html;
-        echo $photo_file_html;
-		echo "<hr> \n";
-		echo $photo_list_html;
+		echo $photo_html; //Näitab fotot
+        echo $photo_file_html; //Näitab valitud foto nime
+		echo "<hr> \n"; //Horisontaalne joon
+		echo $photo_list_html; //Fotode nimekiri
 	?>
 </body>
 </html>
