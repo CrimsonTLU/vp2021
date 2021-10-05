@@ -1,4 +1,7 @@
 <?php
+	session_start();
+	require_once("../../config.php");
+	require_once("fnc_user.php");
 	$author_name = "Christian Hindremäe";
 	
 	//vaatan, mida POST meetodil saadeti
@@ -82,6 +85,31 @@
 	}
 	$photo_select_html .= "</select> \n";
 	
+	//sisselogimine
+	$notice = null;
+	if(isset($_POST["login_submit"])){
+		if(!empty($_POST["email_input"])) {
+			$email = test_input(filter_var($_POST["email_input"], FILTER_VALIDATE_EMAIL));
+				if(empty($email)){
+					$email_error = "Palun sisesta oma e-posti aadress!";
+					
+				}
+			else { $email_error = "Palun sisesta oma e-posti aadress!";
+			
+			}
+		}
+	}
+		if(!empty($_POST["password_input"])) {
+			if(strlen($_POST["password_input"]) < 8){
+					$password_error = "Sisestatud salasõna on liiga lühike!";
+			}else {
+				$notice = sign_in($_POST["email_input"], $_POST["password_input"]);				
+			}
+		}else { $password_error = "Palun sisesta salasõna!";
+			}
+				
+	
+	
 ?>
 <!DOCTYPE html>
 <html lang="et">
@@ -100,6 +128,13 @@
 	<p>See leht on valminud õppetöö raames ja ei sisalda mingit tõsiseltvõetavat sisu!</p>
 	<p>Õppetöö toimub <a href="https://www.tlu.ee/dt">Tallinna Ülikooli Digitehnoloogiate instituudis</a>.</p>
 	<hr>
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+        <input type="email" name="email_input" placeholder="Kasutajatunnus ehk e-post">
+        <input type="password" name="password_input" placeholder="salasõna">
+        <input type="submit" name="login_submit" value="Logi sisse"><?php echo $notice; ?>
+    </form>
+    <p>Loo omale <a href="add_user.php">kasutajakonto</a></p>
+    <hr>
 	<!--ekraanivorm-->
 	<form method="POST">
 		<input type="text" name="todays_adjective_input" placeholder="tänase päeva ilma omadus" value="<?php echo $todays_adjective; ?>">
