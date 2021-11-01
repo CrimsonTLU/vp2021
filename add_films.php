@@ -1,4 +1,10 @@
 <?php
+    //alustame sessiooni
+    session_start();
+    //kas on sisselogitud
+    if(!isset($_SESSION["user_id"])){
+        header("Location: page.php");
+    }
 	require_once("../../config.php");
 	require_once("fnc_films.php");
 	require_once("fnc_general.php");
@@ -92,15 +98,10 @@
 			$film_notice_director = "Sisestage rezissöör!"; }
 		
 		}	
-	
+		require("page2_header.php");
 	
 ?>
-<!DOCTYPE html>
-<html lang="et">
-<head>
-	<meta charset="utf-8">
-	<title><?php echo $author_name; ?>, veebiprogrammeerimine</title>
-</head>
+
 <body>
 	<h1><?php echo $author_name; ?>, veebiprogrammeerimine, muudatused tehtud kodus</h1>
 	<p>See leht on valminud õppetöö raames ja ei sisalda mingit tõsiseltvõetavat sisu!</p>

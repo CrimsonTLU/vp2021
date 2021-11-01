@@ -6,13 +6,9 @@
 	$film_html = null;
 	$film_html = read_all_films();
 	
+	require("page2_header.php");
 ?>
-<!DOCTYPE html>
-<html lang="et">
-<head>
-	<meta charset="utf-8">
-	<title><?php echo $author_name; ?>, veebiprogrammeerimine</title>
-</head>
+
 <body>
 	<h1><?php echo $author_name; ?>, veebiprogrammeerimine, muudatused tehtud kodus</h1>
 	<p>See leht on valminud õppetöö raames ja ei sisalda mingit tõsiseltvõetavat sisu!</p>
