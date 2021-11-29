@@ -1,25 +1,13 @@
 <?php
-    //alustame sessiooni
-    session_start();
-    //kas on sisselogitud
-    if(!isset($_SESSION["user_id"])){
-        header("Location: page2.php");
-    }
-    //väljalogimine
-    if(isset($_GET["logout"])){
-        session_destroy();
-        header("Location: page2.php");
-    }
+    require_once("use_session.php");
 	
-	
-	
-    require_once("../../config.php");
+    require_once("../../../config.php");
     require_once("fnc_movie.php");
-	require_once("fnc_general.php");
+	require_once("../fnc_general.php");
     
     
 	
-    require("page2_header.php");
+    require("../page2_header.php");
 ?>
 	<h1><?php echo $_SESSION["first_name"] ." " .$_SESSION["last_name"]; ?>, veebiprogrammeerimine</h1>
 	<p>See leht on loodud õppetöö raames ja ei sisalda tõsiseltvõetavat sisu!</p>

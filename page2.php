@@ -1,7 +1,11 @@
 <?php
-	session_start();
+	//session_start();
+	require_once("classes/SessionManager.class.php");
+	SessionManager::sessionStart("vp", 0, "/~chrhin/vp2021", "greeny.cs.tlu.ee");
+	
 	require_once("../../config.php");
 	require_once("fnc_user.php");
+	require_once("fnc_gallery.php");
 	$author_name = "Christian Hindremäe";
 	
 	//vaatan, mida POST meetodil saadeti
@@ -113,6 +117,8 @@
 			$notice = $email_error ." " .$password_error;
 		}
     }
+	
+	require("page2_header.php");
 				
 	
 	
@@ -149,6 +155,8 @@
 		<span><?php echo $today_adjective_error; ?></span>
 	</form>
 	<?php echo $today_html; ?>
+	<hr>
+	<?php echo show_latest_public_photo(); ?>
 	<hr>
 	
 	<form method="POST">

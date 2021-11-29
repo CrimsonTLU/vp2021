@@ -1,13 +1,9 @@
 <?php
-    //alustame sessiooni
-    session_start();
-    //kas on sisselogitud
-    if(!isset($_SESSION["user_id"])){
-        header("Location: page.php");
-    }
-	require_once("../../config.php");
+    require_once("use_session.php");
+	
+	require_once("../../../config.php");
 	require_once("fnc_films.php");
-	require_once("fnc_general.php");
+	require_once("../fnc_general.php");
 	//echo $server_host; - kontrollisin, kas sai info kätte
 	$author_name = "Christian Hindremäe";
 	

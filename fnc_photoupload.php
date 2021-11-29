@@ -1,4 +1,5 @@
 <?php
+	$database = "if21_chr_hin";
 
 	function save_image($image, $file_type, $target){
         $notice = null;
@@ -30,30 +31,78 @@
         return $notice;
     }
 	
-	function change_image_size($my_temp_image, $image_width, $image_height, $photo_width_limit, $photo_height_limit){
-		if($image_width > $photo_width_limit or $image_height > $photo_height_limit){
-			
-		}
+	function resize_photo($src, $w, $h, $keep_orig_proportion = true){
+		$image_w = imagesx($src);
+		$image_h = imagesy($src);
+		$new_w = $w;
+		$new_h = $h;
+		$cut_x = 0;
+		$cut_y = 0;
+		$cut_size_w = $image_w;
+		$cut_size_h = $image_h;
 		
-		if($image_width / $photo_width_limit > $image_height / $photo_height_limit) {
-				$image_size_ratio = $image_width / $photo_width_limit;
+		if($w == $h){
+			if($image_w > $image_h){
+				$cut_size_w = $image_h;
+				$cut_x = round(($image_w - $cut_size_w) / 2);
 			} else {
-				$image_size_ratio = $image_height / $photo_height_limit;
+				$cut_size_h = $image_w;
+				$cut_y = round(($image_h - $cut_size_h) / 2);
+			}	
+		} elseif($keep_orig_proportion){//kui tuleb originaaproportsioone säilitada
+			if($image_w / $w > $image_h / $h){
+				$new_h = round($image_h / ($image_w / $w));
+			} else {
+				$new_w = round($image_w / ($image_h / $h));
 			}
-			$image_new_width = round($image_width / $image_size_ratio);
-			$image_new_height = round($image_height / $image_size_ratio);
-			//loome uue, väiksema pildiobjekti
-			$my_new_temp_image = imagecreatetruecolor($image_new_width, $image_new_height);
-			imagecopyresampled($my_new_temp_image, $my_temp_image, 0, 0, 0, 0, $image_new_width, $image_new_height, $image_width, $image_height);
-	
-		return $my_new_temp_image;
-		return $image_new_width;
-		return $image_new_height;
+		} else { //kui on vaja kindlasti etteantud suurust, ehk pisut ka kärpida
+			if($image_w / $w < $image_h / $h){
+				$cut_size_h = round($image_w / $w * $h);
+				$cut_y = round(($image_h - $cut_size_h) / 2);
+			} else {
+				$cut_size_w = round($image_h / $h * $w);
+				$cut_x = round(($image_w - $cut_size_w) / 2);
+			}
+		}
+			
+		//loome uue ajutise pildiobjekti
+		$my_new_image = imagecreatetruecolor($new_w, $new_h);
+		//säilitame vajadusel läbipaistvuse
+		imagesavealpha($my_new_image, true);
+		$trans_color = imagecolorallocatealpha($my_new_image, 0, 0, 0, 127); //127 tähendab läbipaistev
+		imagefill($my_new_image, 0, 0, $trans_color);
+		
+		imagecopyresampled($my_new_image, $src, 0, 0, $cut_x, $cut_y, $new_w, $new_h, $cut_size_w, $cut_size_h);
+		return $my_new_image;
 	}
 	
-	function image_thumbnail($my_temp_image, $image_width, $image_height){
-		$image_thumbnail = imagecreatetruecolor(100, 100);
-		imagecopyresampled(($image_thumbnail, $my_temp_image, 0, 0, 0, 0, 100, 100, $image_width, $image_height);
+	
+	function add_watermark($image, $watermark_file){
+		$watermark = imagecreatefrompng($watermark_file);
+		$watermark_width = imagesx($watermark);
+		$watermark_height = imagesy($watermark);
+		$watermark_x = imagesx($image) - $watermark_width - 10;
+		$watermark_y = imagesy($image) - $watermark_height - 10;
+		imagecopy($image, $watermark, $watermark_x, $watermark_y, 0, 0, $watermark_width, $watermark_height);
+		imagedestroy($watermark);
+	}
+	
+	function store_photo_data($image_file_name, $alt, $privacy){
+		$notice = null;
+		$conn = new mysqli($GLOBALS["server_host"], $GLOBALS["server_user_name"], $GLOBALS["server_password"], $GLOBALS["database"]);
+		$conn->set_charset("utf8");
+		$stmt = $conn->prepare("INSERT INTO vprg_photos (userid, filename, alttext, privacy) VALUES (?, ?, ?, ?)");
+		echo $conn->error;
+		$stmt->bind_param("issi", $_SESSION["user_id"], $image_file_name, $alt, $privacy);
+		if($stmt->execute()){
+		  $notice = "Foto lisati andmebaasi!";
+		} else {
+		  $notice = "Foto lisamisel andmebaasi tekkis tõrge: " .$stmt->error;
+		}
+		
+		$stmt->close();
+		$conn->close();
+		return $notice;
 	}
 
 ?>
